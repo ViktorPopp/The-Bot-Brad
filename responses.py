@@ -1,18 +1,17 @@
-import openai
+from openai import OpenAI
 import dotenv
+import os
+
+openai_client = OpenAI()
 
 dotenv.load_dotenv()
-openai.api_key = os.getenv('OPENAI_API_KEY')
+OpenAI.api_key = os.getenv('OPENAI_API_KEY')
+print("OpenAI api key: " + openai_client.api_key)
 
 def get_response(message: str) -> str:
     p_message = message.lower()
-
-    try:
-        response = openai.Completion.create(
-            model = 'gpt3.5-turbo',
-            messages = [{'role': 'user', 'content': message}]
-        )
-        return response.choices[0].text.strip()
-
-    except:
-        return 'Sorry, something went wrong Error code: 1. Contact the owner of this server for help.'
+    response = openai_client.chat.completions.creat(
+        model = 'gpt-4o-mini',
+        messages = [{'role': 'user', 'content': message}]
+    )
+    return response.choices[0].text.strip()
