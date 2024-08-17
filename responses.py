@@ -1,17 +1,13 @@
-from openai import OpenAI
-import dotenv
-import os
+from langchain_ollama import OllamaLLM
+from langchain_core.prompts import ChatPromptTemplate
 
-openai_client = OpenAI()
-
-dotenv.load_dotenv()
-OpenAI.api_key = os.getenv('OPENAI_API_KEY')
-print("OpenAI api key: " + openai_client.api_key)
+ai_model = OllamaLLM(model = "llama3.1")
+ai_template = """
+Answer the user input.
+User input: {ai_input}
+"""
+ai_prompt = ChatPromptTemplate.from_template(ai_template)
+ai_chain = ai_prompt | ai_model
 
 def get_response(message: str) -> str:
-    p_message = message.lower()
-    response = openai_client.chat.completions.creat(
-        model = 'gpt-4o-mini',
-        messages = [{'role': 'user', 'content': message}]
-    )
-    return response.choices[0].text.strip()
+    return ai_chain.invoke({"ai_input": message})
